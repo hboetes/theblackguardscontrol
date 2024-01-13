@@ -1,0 +1,107 @@
+#!/bin/zsh
+
+# Select your cool name for the table here.
+name=theblackguardscontrol
+target=/etc/nftables/$name.nft
+feed=(
+    https://www.spamhaus.org/drop/drop.txt
+    https://www.spamhaus.org/drop/edrop.txt
+    https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/cn.cidr
+    https://raw.githubusercontent.com/SecOps-Institute/Tor-IP-Addresses/master/tor-exit-nodes.lst
+)
+
+# Get filename
+getfn()
+{
+    echo ${1##*/}
+}
+
+# No extension
+ne()
+{
+    echo ${1%.*}
+}
+
+files=($(for i in $feed; do getfn $i; done))
+
+# XXX
+cd /etc/${name}_generator
+
+# Fetch files, if they are older than 1 week
+for i in $feed; do
+    file=$(getfn $i)
+    # Skip downloading if file is newer than 7 days.
+    if [[ -f $file ]] && find $file -mtime -7 | grep -q .; then
+        continue
+    fi
+    curl -O $i
+done
+
+# First clear out the existing table
+nft table ip $name
+nft delete table ip $name
+
+exec > $name.nft
+
+# Set up table.
+cat << EOF
+#!/usr/sbin/nft -f
+
+# First create the table, so we can flush it, even if it didn't exist before.
+table ip $name
+flush table ip $name
+table ip $name {
+EOF
+
+for i in $files; do
+    cat << EOF
+
+    set set_$(ne $i) {
+        type ipv4_addr
+        flags interval
+        auto-merge
+    }
+EOF
+done
+cat << EOF
+
+    chain permissiondenied {
+        type filter hook input priority filter - 10
+        policy accept
+EOF
+for i in $files; do
+    j=$(ne $i)
+    cat << EOF
+        ip saddr @set_$j log prefix "[$j]" group 0 drop
+EOF
+done
+cat << EOF
+    }
+}
+EOF
+
+exec > $TTY
+
+sudo nft -f $name.nft
+
+# Now fill tables with ip ranges
+for file in $files; do
+    unset set
+    j=$(ne $file)
+    for i in $(cat $file|sed -e 's|[;#].*||'|grep -v ':'); do
+        set+=($i,)
+    done
+    sudo nft add element ip $name set_$j "{ $set }"
+done
+
+# Now create the final config file, with all entries added.
+# Actually, let nft create the file.
+cat << EOF > $name.nft
+#!/usr/sbin/nft -f
+# Create this table to make sure it exists when we delete it. Get it? :-)
+table ip $name
+delete table ip $name
+$(sudo nft list table $name)
+EOF
+chmod 755 $name.nft
+cp $name.nft $target
