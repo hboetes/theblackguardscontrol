@@ -7,7 +7,7 @@ It's a song from the legendary band VoiVod.
 ## What you might want to change:
 These are the lists I currently use, 4 reputable sources:
  - The spamhaus drop lists: https://www.spamhaus.org/drop/
- - A blacklist dropping all traffic from China. For each legitimate visit to my server I get a 1000 illegal ones, enough it enough
+ - A blacklist dropping all traffic from China. For each legitimate visit to my server I get a 1000 illegal ones, enough is enough.
  - tor exit nodes, they are always trying to bruteforce my ssh-server.
 
 ```
