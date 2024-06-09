@@ -81,7 +81,7 @@ EOF
 
 exec > $TTY
 
-sudo nft -f $name.nft
+nft -f $name.nft
 
 # Now fill tables with ip ranges
 for file in $files; do
@@ -90,7 +90,7 @@ for file in $files; do
     for i in $(cat $file|sed -e 's|[;#].*||'|grep -v ':'); do
         set+=($i,)
     done
-    sudo nft add element ip $name set_$j "{ $set }"
+    nft add element ip $name set_$j "{ $set }"
 done
 
 # Now create the final config file, with all entries added.
@@ -100,7 +100,7 @@ cat << EOF > $name.nft
 # Create this table to make sure it exists when we delete it. Get it? :-)
 table ip $name
 delete table ip $name
-$(sudo nft list table $name)
+$(nft list table $name)
 EOF
 chmod 755 $name.nft
 cp $name.nft $target
