@@ -31,8 +31,8 @@ cd /etc/${name}_generator
 # Fetch files, if they are older than 1 week
 for i in $feed; do
     file=$(getfn $i)
-    # Skip downloading if file is newer than 7 days.
-    if [[ -f $file ]] && find $file -mtime -7 | grep -q .; then
+    # Skip downloading if file is newer than 1 day.
+    if [[ -f $file ]] && find $file -mtime -1 | grep -q .; then
         continue
     fi
     curl -O $i
