@@ -5,7 +5,7 @@ This script generates a blacklist for nftables from various ip lists:
 It's a song from the legendary band VoiVod.
 
 ## What you might want to change:
-These are the lists I currently use, 4 reputable sources:
+These are the lists I currently use, 3 reputable sources:
  - The spamhaus drop lists: https://www.spamhaus.org/drop/
  - A blacklist dropping all traffic from China. For each legitimate visit to my server I get a 1000 illegal ones, enough it enough
  - tor exit nodes, they are always trying to bruteforce my ssh-server.
@@ -13,7 +13,6 @@ These are the lists I currently use, 4 reputable sources:
 ```
 feed=(
     https://www.spamhaus.org/drop/drop.txt
-    https://www.spamhaus.org/drop/edrop.txt
     https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/cn.cidr
     https://raw.githubusercontent.com/SecOps-Institute/Tor-IP-Addresses/master/tor-exit-nodes.lst
 )
