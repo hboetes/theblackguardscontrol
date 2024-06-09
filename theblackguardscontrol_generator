@@ -89,6 +89,11 @@ for file in $files; do
     j=$(ne $file)
     for i in $(cat $file|sed -e 's|[;#].*||'|grep -v ':'); do
         set+=($i,)
+        # Some lists are so  big, we have to feed the list in chunks.
+        if (( ${#set[@]} >= 1000 )); then
+            nft add element ip $name set_$j "{ $set }"
+            set=()
+        fi
     done
     nft add element ip $name set_$j "{ $set }"
 done
