@@ -5,18 +5,11 @@ This script generates a blacklist for nftables from various ip lists:
 It's a song from the legendary band VoiVod.
 
 ## What you might want to change:
-These are the lists I currently use, 3 reputable sources:
+These are the lists I currently use, all reputable sources:
  - The spamhaus drop lists: https://www.spamhaus.org/drop/
  - A blacklist dropping all traffic from China. For each legitimate visit to my server I get a 1000 illegal ones, enough is enough.
  - tor exit nodes, they are always trying to bruteforce my ssh-server.
-
-```
-feed=(
-    https://www.spamhaus.org/drop/drop.txt
-    https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/cn.cidr
-    https://raw.githubusercontent.com/SecOps-Institute/Tor-IP-Addresses/master/tor-exit-nodes.lst
-)
-```
+ - https://www.blocklist.de
 
 Blocking the ips from these list will save you a lot of useless traffic.
 
@@ -46,16 +39,10 @@ Check the firewall rules:
 sudo nft list ruleset | less
 ```
 
-Install a cronjob, so the rules are regularly updated.
+Install a cronjob, so the rules are updated regularly.
 ```
-sudo ln /etc/theblackguardscontrol_generator /etc/cron.weekly/
+sudo ln /etc/theblackguardscontrol_generator /etc/cron.daily/
 ```
 
 ## TODO
 Since I don't have ipv6 I have no way to check it, therefore it's currently not supported. PRs are welcome!
-
-Install a cronjob, so the rules are regularly updated.
-
-```
-sudo ln /etc/theblackguardscontrol_generator /etc/cron.weekly/
-```
