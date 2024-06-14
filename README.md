@@ -46,3 +46,4 @@ sudo ln /etc/theblackguardscontrol_generator /etc/cron.daily/
 
 ## TODO
 Since I don't have ipv6 I have no way to check it, therefore it's currently not supported. PRs are welcome!
+Add automatic reports? https://www.blocklist.de/en/download.html#ohnefail2ban
